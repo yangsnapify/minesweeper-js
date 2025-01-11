@@ -11,6 +11,8 @@
 </body>
 <script>
     let l = new MineSweeper();
-    l.createMap(3)
+    l.createMap(5);
+    l.placeMines(l.calcMines());
+    console.log(l.maps)
 </script>
 </html>
