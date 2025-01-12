@@ -2,22 +2,30 @@
     
     class MineSweeper {
         constructor() {
-            this.maps = null;
+            this.grid = null;
+            this.displayGrid = null;
             this.gridSize = 0;
-            this.mapItemType = ["MINES", "DEFAULT"];
+            this.mapItemType = ["MINES"];
             this.mode = ["EASY", "HARD"];
             this.selectMode = this.mode[0];
         }
 
         createMap(x) {
             this.gridSize = x;
-            if (!this.maps) {
-                this.maps = Array.from({ length: x }, () => Array.from({ length: x }, () => null));
+            function init() {
+                return Array.from({ length: x }, () => Array.from({ length: x }, () => null));
             }
-            return this.maps;
+            
+            if (!this.grid) {
+                this.grid = init();
+                this.displayGrid = init();
+            }
+            return this.grid;
         }
 
         formatMapItems(x, y) {
+            if (this.grid[x][y] === this.mapItemType[0]) return this.mapItemType[0];
+
             let minesCount = 0;
             const directions = [
                 [-1, 0], [1, 0], [0, -1], [0, 1],
@@ -27,13 +35,21 @@
                 const nx = dx + x;
                 const ny = dy + y;
 
-                if (nx >= 0 && nx < this.maps.length && ny >= 0 && ny < this.maps.length ) {
-                    if (this.maps[nx][ny] === this.mapItemType[0]) {
+                if (nx >= 0 && nx < this.grid.length && ny >= 0 && ny < this.grid.length ) {
+                    if (this.grid[nx][ny] === this.mapItemType[0]) {
                         minesCount += 1
                     }
                 }
             })
             return minesCount;
+        }
+        
+        runner() {
+            for (let i = 0; i < this.gridSize; i ++ ) {
+                for (let j = 0; j < this.gridSize; j ++ ) {
+                    this.displayGrid[i][j] = this.formatMapItems(i, j)
+                }
+            }
         }
 
         placeMines(mines) {
@@ -43,8 +59,8 @@
                 const x = Math.floor(Math.random() * this.gridSize);
                 const y = Math.floor(Math.random() * this.gridSize);
 
-                if (this.maps[x][y] !== this.mapItemType[0]) {
-                    this.maps[x][y] = this.mapItemType[0];
+                if (this.grid[x][y] !== this.mapItemType[0]) {
+                    this.grid[x][y] = this.mapItemType[0];
                     current += 1;
                 }
             }
