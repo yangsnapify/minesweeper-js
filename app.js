@@ -3,19 +3,19 @@
     class MineSweeper {
         constructor() {
             this.grid = null;
-            this.displayGrid = null;
             this.gridSize = 0;
             this.mapItemType = ["MINES"];
             this.mode = ["EASY", "HARD"];
             this.selectMode = this.mode[0];
-            this.maxFillDepth = 2;
+            this.maxFillDepth = 3;
         }
 
-        fmtData(x, y, v) {
+        fmtData(x, y, v, r = false) {
             return {
                 x,
                 y,
-                v
+                v,
+                revealed: r
             }
         }
 
@@ -30,7 +30,6 @@
 
             if (!this.grid) {
                 this.grid = init();
-                this.displayGrid = init();
             }
             return this.grid;
         }
@@ -40,9 +39,19 @@
                 [-1, 0], [1, 0], [0, -1], [0, 1],
                 [-1, -1], [-1, 1], [1, -1], [1, 1]
             ]
-            directions.forEach(([dx, dy]) => {
-                cb(dx + x, dy + y);
+            directions.forEach(([dx, dy], index) => {
+                cb(dx + x, dy + y, index);
             })
+        }
+
+        checkNeighborContainMines(x, y) {
+            let isContainMines = false;
+            this.checkNeighbor(x, y, (nx, ny) => {
+                if (this.checkIsBound(nx, ny) && this.grid[nx][ny].v === this.mapItemType[0]) {
+                    isContainMines = true;
+                }
+            })
+            return isContainMines;
         }
 
         checkIsBound(x, y) {
@@ -54,10 +63,9 @@
             if (this.grid[x][y].v === this.mapItemType[0]) return this.fmtData(x, y, this.mapItemType[0]);
 
             let minesCount = 0;
-            this.checkNeighbor(x, y, (nx, ny) => {
-                if (!this.checkIsBound(nx, ny)) return;
-
-                if (this.grid[nx][ny].v === this.mapItemType[0]) {
+            this.checkNeighbor(x, y, function (nx, ny) {
+                if (!that.checkIsBound(nx, ny)) return;
+                if (that.grid[nx][ny].v === that.mapItemType[0]) {
                     minesCount += 1
                 }
             })
@@ -67,7 +75,7 @@
         runner() {
             for (let i = 0; i < this.gridSize; i++) {
                 for (let j = 0; j < this.gridSize; j++) {
-                    this.displayGrid[i][j] = this.formatMapItems(i, j)
+                    this.grid[i][j] = this.formatMapItems(i, j)
                 }
             }
         }
@@ -101,20 +109,30 @@
             return Math.round(totalGridSize * minesPercentage);
         }
 
-        floodFill(x, y) {
-            let currentDepth = 0;
-            this.markReveal(x, y)
-            function runner(vx, vy) {
-                this.checkNeighbor(vx, vy, (nx, ny) => {
-                    if (!this.checkIsOutBound(nx, ny)) return;
-                    if (this.grid[nx][ny] === this.mapItemType[0]) return;
-                    if (currentDepth === this.maxFillDepth) return;
-                    this.markReveal(nx, ny)
-                    runner(nx, ny);
-                })
-                currentDepth += 1;
+        markReveal(x, y) {
+            this.grid[x][y] = {
+                ...this.grid[x][y],
+                revealed: true
             }
-            runner(x, y)
+        }
+
+        floodFill(x, y) {
+            x = parseInt(x);
+            y = parseInt(y);
+
+            let that = this;
+            const isInvalid = (px, py) => !this.checkIsBound(px, py) || this.grid[px][py].v === this.mapItemType[0] || this.grid[px][py].revealed;
+
+            function _run(vx, vy) {
+                that.checkNeighbor(vx, vy, (nx, ny) => {
+                    if (isInvalid(nx, ny)) return;
+                    if (!that.checkNeighborContainMines(nx, ny)) {
+                        that.markReveal(nx, ny);
+                        _run(nx, ny)
+                    }
+                });
+            }
+            _run(x, y);
         }
     }
 

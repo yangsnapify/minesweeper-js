@@ -39,8 +39,7 @@
         `<div data-x=${val.x} data-y=${val.y} data-v=${val.v} class="v1">${val.v}</div>`
     }
 
-    let ui = toui(l.displayGrid);
-    console.log(l.displayGrid)
+    let ui = toui(l.grid);
     var maps = document.getElementById("maps");
     maps.innerHTML = ui;
     var items = document.getElementsByClassName("v1");
@@ -51,7 +50,8 @@
                 const val = i.getAttribute("data-v");
                 const xcoord = i.getAttribute("data-x");
                 const ycoord = i.getAttribute("data-y");
-                console.log(val, xcoord, ycoord);
+                l.floodFill(xcoord, ycoord);
+                console.log(l.grid)
             }
         }
     }
