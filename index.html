@@ -1,19 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="./app.js"></script>
     <title>Document</title>
 </head>
+
 <body>
-    
+    <div id="maps">
+
+    </div>
 </body>
+<style>
+    #maps {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+    #maps > div {
+        border: solid;
+        height: 50px;
+        line-height: 50px;
+        cursor: pointer;
+    }
+</style>
 <script>
     let l = new MineSweeper();
     l.createMap(5);
     l.placeMines(l.calcMines());
-    l.runner()
-    console.log(l.grid, l.displayGrid)
+    l.runner();
+
+    function toui(val) {
+        return Array.isArray(val) ? val.map(toui).join("") : 
+        `<div data-x=${val.x} data-y=${val.y} data-v=${val.v} class="v1">${val.v}</div>`
+    }
+
+    let ui = toui(l.displayGrid);
+    console.log(l.displayGrid)
+    var maps = document.getElementById("maps");
+    maps.innerHTML = ui;
+    var items = document.getElementsByClassName("v1");
+
+    if (items) {
+        for (let i of items) {
+            i.onclick = function(x) {
+                const val = i.getAttribute("data-v");
+                const xcoord = i.getAttribute("data-x");
+                const ycoord = i.getAttribute("data-y");
+                console.log(val, xcoord, ycoord);
+            }
+        }
+    }
 </script>
 </html>
