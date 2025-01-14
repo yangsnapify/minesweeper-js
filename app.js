@@ -20,14 +20,11 @@
         }
 
         createMap(x) {
+            var that = this;
             this.gridSize = x;
             function init() {
                 return Array.from({ length: x }, (_, j) => Array.from({ length: x }, (_, k) => {
-                    return {
-                        x: j,
-                        y: k,
-                        v: null
-                    }
+                    return that.fmtData(j, k, null)
                 }));
             }
 
