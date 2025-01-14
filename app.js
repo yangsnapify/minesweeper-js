@@ -20,7 +20,7 @@
         }
 
         createMap(x) {
-            var that = this;
+            let that = this;
             this.gridSize = x;
             function init() {
                 return Array.from({ length: x }, (_, j) => Array.from({ length: x }, (_, k) => {
@@ -50,6 +50,7 @@
         }
 
         formatMapItems(x, y) {
+            let that = this;
             if (this.grid[x][y].v === this.mapItemType[0]) return this.fmtData(x, y, this.mapItemType[0]);
 
             let minesCount = 0;
@@ -60,11 +61,7 @@
                     minesCount += 1
                 }
             })
-            return {
-                x,
-                y,
-                v: minesCount
-            }
+            return this.fmtData(x, y, minesCount);
         }
 
         runner() {
