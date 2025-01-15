@@ -1,13 +1,14 @@
 (function (global) {
 
     class MineSweeper {
-        constructor() {
+        constructor(size) {
             this.grid = null;
-            this.gridSize = 0;
+            this.gridSize = size;
             this.mapItemType = ["MINES"];
             this.mode = ["EASY", "HARD"];
             this.selectMode = this.mode[0];
             this.maxFillDepth = 3;
+            this.minesCount = 0;
         }
 
         fmtData(x, y, v, r = false) {
@@ -19,19 +20,21 @@
             }
         }
 
-        createMap(x) {
-            let that = this;
-            this.gridSize = x;
+        run() {
+            this.createMap();
+            this.placeMines(this.getMinesPercentage()).readyGrid()
+        }
+
+        createMap() {
+            const that = this;
+            const x = this.gridSize;
             function init() {
                 return Array.from({ length: x }, (_, j) => Array.from({ length: x }, (_, k) => {
                     return that.fmtData(j, k, null)
                 }));
             }
-
-            if (!this.grid) {
-                this.grid = init();
-            }
-            return this.grid;
+            this.grid = init();
+            return this;
         }
 
         checkNeighbor(x, y, cb) {
@@ -72,7 +75,7 @@
             return this.fmtData(x, y, minesCount);
         }
 
-        runner() {
+        readyGrid() {
             for (let i = 0; i < this.gridSize; i++) {
                 for (let j = 0; j < this.gridSize; j++) {
                     this.grid[i][j] = this.formatMapItems(i, j)
@@ -81,6 +84,7 @@
         }
 
         placeMines(mines) {
+            this.minesCount = mines;
             let current = 0;
 
             while (current < mines) {
@@ -92,9 +96,16 @@
                     current += 1;
                 }
             }
+            return this;
         }
 
-        calcMines() {
+        markMines(x, y, isRevealed) {
+            if (!isRevealed) {
+                
+            }
+        }
+
+        getMinesPercentage() {
             let _mode = this.selectMode;
             let minesPercentage = 0;
 
@@ -116,9 +127,19 @@
             }
         }
 
-        floodFill(x, y) {
+        floodFill(x, y, updateUI) {
             x = parseInt(x);
             y = parseInt(y);
+            this.markReveal(x, y);
+            if (this.grid[x][y].v === this.mapItemType[0]) {
+                setTimeout(() => {
+                    alert("you lose resetting game");
+                    this.run()
+                    updateUI(this.grid);
+                }, 1000);
+                return;
+            }
+
 
             let that = this;
             const isInvalid = (px, py) => !this.checkIsBound(px, py) || this.grid[px][py].v === this.mapItemType[0] || this.grid[px][py].revealed;

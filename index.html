@@ -21,7 +21,8 @@
         justify-content: center;
         text-align: center;
     }
-    #maps > div {
+
+    #maps>div {
         border: solid;
         height: 50px;
         line-height: 50px;
@@ -29,31 +30,35 @@
     }
 </style>
 <script>
-    let l = new MineSweeper();
-    l.createMap(5);
-    l.placeMines(l.calcMines());
-    l.runner();
+    const l = new MineSweeper(5);
+    l.run();
+
 
     function toui(val) {
-        return Array.isArray(val) ? val.map(toui).join("") : 
-        `<div data-x=${val.x} data-y=${val.y} data-v=${val.v} class="v1">${val.v}</div>`
+        return Array.isArray(val) ? val.map(toui).join("") :
+            `<div data-x=${val.x} data-y=${val.y} data-v=${val.v} class="v1">
+                ${val.revealed ? val.v : `<span></span>`}
+            </div>`
     }
 
-    let ui = toui(l.grid);
-    var maps = document.getElementById("maps");
-    maps.innerHTML = ui;
-    var items = document.getElementsByClassName("v1");
+    function update(z) {
+        const ui = toui(z);
+        const maps = document.getElementById("maps");
+        maps.innerHTML = ui;
+        const items = document.getElementsByClassName("v1");
 
-    if (items) {
-        for (let i of items) {
-            i.onclick = function(x) {
-                const val = i.getAttribute("data-v");
-                const xcoord = i.getAttribute("data-x");
-                const ycoord = i.getAttribute("data-y");
-                l.floodFill(xcoord, ycoord);
-                console.log(l.grid)
+        if (items) {
+            for (let i of items) {
+                i.onclick = function (x) {
+                    const val = i.getAttribute("data-v");
+                    const xcoord = i.getAttribute("data-x");
+                    const ycoord = i.getAttribute("data-y");
+                    l.floodFill(xcoord, ycoord, update);
+                    update(l.grid);
+                }
             }
         }
     }
+    update(l.grid);
 </script>
 </html>
