@@ -175,6 +175,9 @@
         floodFill(x, y, updateUI) {
             x = parseInt(x);
             y = parseInt(y);
+            
+            if (this.markMinesArr.some(j => j[0] === x && j[1] === y)) return;
+
             this.updateRevealStatus(x, y);
             if (this.grid[x][y].v === this.mapItemType[0]) {
                 setTimeout(() => {
