@@ -9,11 +9,30 @@
 </head>
 
 <body>
-    <div id="maps">
-
+    <div id="bomb">
+        <img src="./bomb.png" alt="">
+        <div id="count"></div>
     </div>
+    <div id="maps"></div>
 </body>
 <style>
+    #bomb {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    #count {
+        font-weight: bold;
+        font-size: 30px;
+    }
+
+    #bomb>img {
+        width: 70px;
+        height: 70px;
+    }
+
     #maps {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -31,8 +50,8 @@
 </style>
 <script>
     const l = new MineSweeper(5);
+    l.setCountEl("count")
     l.run();
-
 
     function toui(val) {
         return Array.isArray(val) ? val.map(toui).join("") :
@@ -49,16 +68,24 @@
 
         if (items) {
             for (let i of items) {
-                i.onclick = function (x) {
+                i.addEventListener("click", function (x) {
                     const val = i.getAttribute("data-v");
                     const xcoord = i.getAttribute("data-x");
                     const ycoord = i.getAttribute("data-y");
                     l.floodFill(xcoord, ycoord, update);
                     update(l.grid);
-                }
+                })
+                i.addEventListener("contextmenu", function (x) {
+                    x.preventDefault();
+                    const xcoord = i.getAttribute("data-x");
+                    const ycoord = i.getAttribute("data-y");
+                    l.updateMinesStatus(xcoord, ycoord, i);
+                })
             }
         }
     }
     update(l.grid);
+    console.log(l.grid)
 </script>
+
 </html>
