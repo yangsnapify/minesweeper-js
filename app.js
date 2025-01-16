@@ -34,6 +34,9 @@
                 this.run()
                 return;
             }
+            if (this.grid[x][y].revealed) {
+                return;
+            }
 
             const isMarked = this.markMinesArr.some(j => j[0] === x && j[1] === y);
           
@@ -43,7 +46,6 @@
                     el.style.background = "none"
                     this.minesCount++;
                     this.reRunCount();
-                    this.markReveal(x, y, false);
                 } else {
                     if (this.minesCount === 0) {
                         return;
@@ -52,7 +54,6 @@
                     el.style.background = "red"
                     this.minesCount--;
                     this.reRunCount();
-                    this.markReveal(x, y);
                 }
             }
         }
@@ -67,6 +68,7 @@
         }
 
         run() {
+            this.markMinesArr = [];
             this.createMap();
             this.placeMines(this.getMinesPercentage()).readyGrid();
             this.reRunCount();
@@ -163,7 +165,7 @@
             return Math.round(totalGridSize * minesPercentage);
         }
 
-        markReveal(x, y, v) {
+        updateRevealStatus(x, y, v) {
             this.grid[x][y] = {
                 ...this.grid[x][y],
                 revealed: typeof v === "boolean" ? v : true
@@ -173,7 +175,7 @@
         floodFill(x, y, updateUI) {
             x = parseInt(x);
             y = parseInt(y);
-            this.markReveal(x, y);
+            this.updateRevealStatus(x, y);
             if (this.grid[x][y].v === this.mapItemType[0]) {
                 setTimeout(() => {
                     alert("you lose resetting game");
@@ -190,8 +192,9 @@
             function _run(vx, vy) {
                 that.checkNeighbor(vx, vy, (nx, ny) => {
                     if (isInvalid(nx, ny)) return;
+                    if (that.markMinesArr.some(j => j[0] === nx && j[1] === ny)) return;
                     if (!that.checkNeighborContainMines(nx, ny)) {
-                        that.markReveal(nx, ny);
+                        that.updateRevealStatus(nx, ny);
                         _run(nx, ny)
                     }
                 });

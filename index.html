@@ -60,7 +60,7 @@
             </div>`
     }
 
-    function update(z) {
+    function update(z, mines) {
         const ui = toui(z);
         const maps = document.getElementById("maps");
         maps.innerHTML = ui;
@@ -68,24 +68,27 @@
 
         if (items) {
             for (let i of items) {
+                const val = i.getAttribute("data-v");
+                const xcoord = i.getAttribute("data-x");
+                const ycoord = i.getAttribute("data-y");
+
+                const isSelected = l.markMinesArr.some(j => j[0] == xcoord && j[1] == ycoord);
+                if (isSelected) {
+                    i.style.background = "red"
+                }
+
                 i.addEventListener("click", function (x) {
-                    const val = i.getAttribute("data-v");
-                    const xcoord = i.getAttribute("data-x");
-                    const ycoord = i.getAttribute("data-y");
                     l.floodFill(xcoord, ycoord, update);
-                    update(l.grid);
+                    update(l.grid, l.markMinesArr);
                 })
                 i.addEventListener("contextmenu", function (x) {
                     x.preventDefault();
-                    const xcoord = i.getAttribute("data-x");
-                    const ycoord = i.getAttribute("data-y");
                     l.updateMinesStatus(xcoord, ycoord, i);
                 })
             }
         }
     }
     update(l.grid);
-    console.log(l.grid)
 </script>
 
 </html>
