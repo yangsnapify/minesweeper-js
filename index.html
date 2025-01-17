@@ -49,46 +49,15 @@
     }
 </style>
 <script>
-    const l = new MineSweeper(5);
-    l.setCountEl("count")
-    l.run();
 
-    function toui(val) {
-        return Array.isArray(val) ? val.map(toui).join("") :
-            `<div data-x=${val.x} data-y=${val.y} data-v=${val.v} class="v1">
-                ${val.revealed ? val.v : `<span></span>`}
-            </div>`
-    }
+    const map = new MineSweeper({
+        size: 5,
+        countEl: document.getElementById("count"),
+        mapEl: document.getElementById("maps"),
+        cellsClass: "v1",
+    });
+    map.run();
 
-    function update(z, mines) {
-        const ui = toui(z);
-        const maps = document.getElementById("maps");
-        maps.innerHTML = ui;
-        const items = document.getElementsByClassName("v1");
-
-        if (items) {
-            for (let i of items) {
-                const val = i.getAttribute("data-v");
-                const xcoord = i.getAttribute("data-x");
-                const ycoord = i.getAttribute("data-y");
-
-                const isSelected = l.markMinesArr.some(j => j[0] == xcoord && j[1] == ycoord);
-                if (isSelected) {
-                    i.style.background = "red"
-                }
-
-                i.addEventListener("click", function (x) {
-                    l.floodFill(xcoord, ycoord, update);
-                    update(l.grid, l.markMinesArr);
-                })
-                i.addEventListener("contextmenu", function (x) {
-                    x.preventDefault();
-                    l.updateMinesStatus(xcoord, ycoord, i);
-                })
-            }
-        }
-    }
-    update(l.grid);
 </script>
 
 </html>
