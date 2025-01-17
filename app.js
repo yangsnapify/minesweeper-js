@@ -117,7 +117,6 @@
 
             if (cell.value === 'MINES') {
                 this.gameOver();
-                return;
             }
 
             if (cell.value === 0) {
@@ -134,7 +133,7 @@
             setTimeout(() => {
                 alert('Game Over! Starting new game...');
                 this.run();
-            }, 100);
+            }, 1000);
         }
 
         run() {
@@ -186,10 +185,12 @@
 
             if (this.state.markMinesArr.has(coordKey)) {
                 this.state.markMinesArr.delete(coordKey);
+                cell.state = CELL_STATES.HIDDEN;
                 element.style.background = 'none';
                 this.state.minesCount++;
             } else if (this.state.minesCount > 0) {
                 this.state.markMinesArr.add(coordKey);
+                cell.state = CELL_STATES.FLAGGED;
                 element.style.background = 'red';
                 this.state.minesCount--;
             }
