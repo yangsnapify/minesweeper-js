@@ -1,35 +1,35 @@
 (function (global) {
 
     class MineSweeper {
-        constructor(size) {
+        constructor(conf) {
             this.grid = null;
-            this.gridSize = size;
+            this.gridSize = conf.size;
             this.mapItemType = ["MINES"];
             this.mode = ["EASY", "HARD"];
             this.selectMode = this.mode[0];
             this.maxFillDepth = 3;
             this.minesCount = 0;
-            this.countEl = null;
-            this.mapEl = null;
+            this.countEl = conf.countEl;
+            this.mapEl = conf.mapEl;
+            this.cellEl = conf.cellsClass;
+            this.fmt = conf.formatter;
             this.markMinesArr = [];
-            this.minesCoords = []
+            this.minesCoords = [];
+
+            this.toui = this.toui.bind(this);
+            this.update = this.update.bind(this);
         }
 
-        setCountEl(el) {
-            const _el = document.getElementById(el);
-            if (_el) {
-                this.countEl = _el;
-            }
-        }
         reRunCount() {
             this.countEl.innerHTML = this.minesCount;
         }
 
         updateMinesStatus(x, y, el) {
+            console.log(x, y, el)
             x = parseInt(x);
             y = parseInt(y);
 
-            if (this.minesCount === 0 && this.minesCoords.every((j, i) => j[0] === this.markMinesArr[i][0] && j[1] === this.markMinesArr[i][1] )) {
+            if (this.minesCount === 0 && this.minesCoords.every((j, i) => j[0] === this.markMinesArr[i][0] && j[1] === this.markMinesArr[i][1])) {
                 console.log('win')
                 this.run()
                 return;
@@ -39,7 +39,7 @@
             }
 
             const isMarked = this.markMinesArr.some(j => j[0] === x && j[1] === y);
-          
+
             if (el) {
                 if (isMarked) {
                     this.markMinesArr = this.markMinesArr.filter((j, i) => j[0] + j[1] !== x + y);
@@ -72,6 +72,7 @@
             this.createMap();
             this.placeMines(this.getMinesPercentage()).readyGrid();
             this.reRunCount();
+            this.update(this.grid);
         }
 
         createMap() {
@@ -175,7 +176,7 @@
         floodFill(x, y, updateUI) {
             x = parseInt(x);
             y = parseInt(y);
-            
+
             if (this.markMinesArr.some(j => j[0] === x && j[1] === y)) return;
 
             this.updateRevealStatus(x, y);
@@ -203,6 +204,59 @@
                 });
             }
             _run(x, y);
+        }
+
+        toui(val) {
+            return Array.isArray(val) ? val.map(this.toui).join("") : `<div data-x=${val.x} data-y=${val.y} data-v=${val.v} class="v1">
+                ${val.revealed ? val.v : `<span></span>`}
+            </div>`
+        }
+
+        update(mapData) {
+            const that = this;
+            let ui;
+            if (typeof this.fmt === 'function') {
+                ui = this.fmt(mapData);
+            } else {
+                ui = this.toui(mapData)
+            }
+            this.mapEl.innerHTML = ui;
+        
+            const items = document.getElementsByClassName(this.cellEl);
+            
+            if (items && items.length > 0) {
+                let itemsIndex = 0;
+                for (let rowIndex = 0; rowIndex < this.gridSize; rowIndex++) {
+                    for (let colIndex = 0; colIndex < this.grid[rowIndex].length; colIndex++) {                
+                        const value = items[itemsIndex];
+                        
+                        if (!value) {
+                            console.warn(`No element found at index ${itemsIndex}`);
+                            continue;
+                        }
+        
+                        const xcoord = this.grid[rowIndex][colIndex].x;
+                        const ycoord = this.grid[rowIndex][colIndex].y;
+        
+                        const isSelected = this.markMinesArr.some(j => j[0] === xcoord && j[1] === ycoord);
+                        if (isSelected) {
+                            value.style.background = "red";
+                        }
+        
+                        value.addEventListener("click", (event) => {
+                            that.floodFill(xcoord, ycoord, that.update);
+                            that.update(this.grid, this.markMinesArr);
+                        });
+        
+                        value.addEventListener("contextmenu", (event) => {
+                            event.preventDefault();
+                            that.updateMinesStatus(xcoord, ycoord, value);
+                        });
+                        
+                        itemsIndex++;
+                    }
+                }
+            }
         }
     }
 
