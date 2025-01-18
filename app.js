@@ -54,7 +54,7 @@
         }
 
         createGrid() {
-            return Array.from({ length: this.config.size }, (_, i) => 
+            return Array.from({ length: this.config.size }, (_, i) =>
                 Array.from({ length: this.config.size }, (_, j) => ({
                     x: i,
                     y: j,
@@ -67,12 +67,12 @@
         placeMines() {
             const totalMines = Math.round(this.config.size * this.config.size * this.state.gameMode.minePercentage);
             this.state.minesCount = totalMines;
-            
+
             while (this.state.minesCoords.size < totalMines) {
                 const x = Math.floor(Math.random() * this.config.size);
                 const y = Math.floor(Math.random() * this.config.size);
                 const coordKey = `${x},${y}`;
-                
+
                 if (!this.state.minesCoords.has(coordKey)) {
                     this.state.minesCoords.add(coordKey);
                     this.state.grid[x][y].value = 'MINES';
@@ -82,7 +82,7 @@
 
         calculateAdjacentMines() {
             const directions = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
-            
+
             for (let x = 0; x < this.config.size; x++) {
                 for (let y = 0; y < this.config.size; y++) {
                     if (this.state.grid[x][y].value === 'MINES') continue;
@@ -91,7 +91,7 @@
                     for (const [dx, dy] of directions) {
                         const newX = x + dx;
                         const newY = y + dy;
-                        
+
                         if (this.isValidCell(newX, newY) && this.state.grid[newX][newY].value === 'MINES') {
                             mineCount++;
                         }
@@ -106,8 +106,8 @@
         }
 
         floodFill(x, y) {
-            if (!this.isValidCell(x, y) || 
-                this.state.grid[x][y].state === CELL_STATES.REVEALED || 
+            if (!this.isValidCell(x, y) ||
+                this.state.grid[x][y].state === CELL_STATES.REVEALED ||
                 this.state.grid[x][y].state === CELL_STATES.FLAGGED) {
                 return;
             }
@@ -127,6 +127,7 @@
             }
 
             this.update();
+            this.checkWinCondition();
         }
 
         gameOver() {
@@ -140,7 +141,7 @@
             this.state.grid = this.createGrid();
             this.state.markMinesArr.clear();
             this.state.minesCoords.clear();
-            
+
             this.placeMines();
             this.calculateAdjacentMines();
             this.update();
@@ -173,7 +174,7 @@
                 .flat()
                 .map(cell => this.config.formatter ? this.config.formatter(cell) : this.toui(cell))
                 .join('');
-                
+
             this.config.mapEl.innerHTML = html;
         }
 
@@ -196,7 +197,6 @@
             }
 
             this.updateMineCounter();
-            this.checkWinCondition();
         }
 
         checkWinCondition() {
@@ -204,7 +204,14 @@
                 const allMinesFlagged = Array.from(this.state.minesCoords)
                     .every(coord => this.state.markMinesArr.has(coord));
 
-                if (allMinesFlagged) {
+                const allNonMinesRevealed = this.state.grid
+                    .flat()
+                    .every(cell =>
+                        cell.value === 'MINES' ||
+                        cell.state === CELL_STATES.REVEALED
+                    );
+
+                if (allMinesFlagged && allNonMinesRevealed) {
                     alert('Congratulations! You won!');
                     this.run();
                 }
