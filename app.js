@@ -212,8 +212,10 @@
                     );
 
                 if (allMinesFlagged && allNonMinesRevealed) {
-                    alert('Congratulations! You won!');
+                    setTimeout(() => {
+                        alert('Congratulations! You won!');
                     this.run();
+                    }, 1500);
                 }
             }
         }
