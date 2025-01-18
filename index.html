@@ -55,6 +55,19 @@
         countEl: document.getElementById("count"),
         mapEl: document.getElementById("maps"),
         cellsClass: "v1",
+        formatter: (cell) => {
+            const backgroundColor = cell.state === 'flagged' ? 'red' : 'none';
+            return `
+                <div 
+                    class="v1"
+                    style="background: ${backgroundColor}" 
+                    data-x="${cell.x}"
+                    data-y="${cell.y}"
+                >
+                    ${cell.state === "revealed" ? cell.value : ''}
+                </div>
+            `;
+        }
     });
     map.run();
 
