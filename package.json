@@ -1,0 +1,19 @@
+{
+  "name": "minesweeper",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yangsnapify/minesweeper-js.git"
+  },
+  "author": "trustour9@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yangsnapify/minesweeper-js/issues"
+  },
+  "homepage": "https://github.com/yangsnapify/minesweeper-js#readme",
+  "description": "A lightweight and easy-to-use Minesweeper game library in JavaScript."
+}
