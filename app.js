@@ -209,7 +209,7 @@
                 if (allMinesFlagged && allNonMinesRevealed) {
                     setTimeout(() => {
                         alert('Congratulations! You won!');
-                    this.run();
+                        this.run();
                     }, 1500);
                 }
             }
