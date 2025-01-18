@@ -197,6 +197,7 @@
             }
 
             this.updateMineCounter();
+            this.checkWinCondition();
         }
 
         checkWinCondition() {
