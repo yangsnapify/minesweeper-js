@@ -16,7 +16,7 @@ A classic Minesweeper game implementation in JavaScript using a class-based appr
 
 1. Include the Minesweeper script in your HTML file:
 ```html
-<script src="path/to/minesweeper.js"></script>
+<script src="path/to/dist.js"></script>
 ```
 
 2. Add the required HTML elements:
