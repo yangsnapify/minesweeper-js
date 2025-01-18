@@ -201,10 +201,6 @@ The game uses several key algorithms and data structures:
 - Random mine placement with duplicate prevention
 - Adjacent mine calculation using direction arrays
 
-## Contributing
-
-Feel free to submit issues and enhancement requests!
-
 ## License
 
 This project is open source and available under the MIT License.
