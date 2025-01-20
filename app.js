@@ -225,4 +225,4 @@
     } else {
         global.MineSweeper = MineSweeper;
     }
-})(typeof window !== 'undefined' ? window : global);
+})(globalThis);
