@@ -1,6 +1,12 @@
 # Minesweeper Game
 
+Welcome to my Minesweeper game! Click the link below to start playing:
+
 A classic Minesweeper game implementation in JavaScript using a class-based approach. This implementation features customizable grid size, different difficulty modes, and a clean, modular architecture.
+
+👉 [Play Minesweeper Now!](https://yangsnapify.github.io/minesweeper-js/)
+
+Have fun and enjoy the challenge!
 
 ## Features
 
