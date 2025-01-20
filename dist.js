@@ -255,4 +255,4 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   } else {
     global.MineSweeper = MineSweeper;
   }
-})(typeof window !== 'undefined' ? window : global);
+})(globalThis);
