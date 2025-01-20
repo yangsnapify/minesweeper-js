@@ -1,4 +1,6 @@
 (function (global) {
+    const isNode = typeof window === 'undefined';
+
     const GAME_MODES = {
         EASY: { name: 'EASY', minePercentage: 0.10 },
         HARD: { name: 'HARD', minePercentage: 0.20 }
@@ -31,7 +33,9 @@
             this.update = this.update.bind(this);
             this.toui = this.toui.bind(this);
 
-            this.initializeEventListeners();
+            if (!isNode) {
+                this.initializeEventListeners();
+            }
         }
 
         initializeEventListeners() {
@@ -216,5 +220,9 @@
         }
     }
 
-    global.MineSweeper = MineSweeper;
-})(window);
+    if (isNode) {
+        module.exports = MineSweeper;
+    } else {
+        global.MineSweeper = MineSweeper;
+    }
+})(typeof window !== 'undefined' ? window : global);

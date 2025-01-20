@@ -14,6 +14,7 @@ function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), 
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 (function (global) {
+  var isNode = typeof window === 'undefined';
   var GAME_MODES = {
     EASY: {
       name: 'EASY',
@@ -48,7 +49,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       };
       this.update = this.update.bind(this);
       this.toui = this.toui.bind(this);
-      this.initializeEventListeners();
+      if (!isNode) {
+        this.initializeEventListeners();
+      }
     }
     return _createClass(MineSweeper, [{
       key: "initializeEventListeners",
@@ -247,5 +250,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
     }]);
   }();
-  global.MineSweeper = MineSweeper;
-})(window);
+  if (isNode) {
+    module.exports = MineSweeper;
+  } else {
+    global.MineSweeper = MineSweeper;
+  }
+})(typeof window !== 'undefined' ? window : global);
