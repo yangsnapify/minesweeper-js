@@ -20,6 +20,11 @@ A classic Minesweeper game implementation in JavaScript using a class-based appr
 ```
 
 2. Add the required HTML elements:
+```javascript
+const MineSweeper = require('jlgy-minesweeper');
+```
+
+3. Add the required HTML elements:
 ```html
 <div id="count"></div>
 <div id="maps"></div>
