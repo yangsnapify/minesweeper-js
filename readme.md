@@ -19,10 +19,11 @@ A classic Minesweeper game implementation in JavaScript using a class-based appr
 <script src="path/to/dist.js"></script>
 ```
 
-2. Add the required HTML elements:
+2. While the package can be required in Node.js environment:
 ```javascript
 const MineSweeper = require('jlgy-minesweeper');
 ```
+Note: The Node.js environment is only supported for module loading - the game functionality requires a browser environment as it depends on DOM manipulation.
 
 3. Add the required HTML elements:
 ```html
