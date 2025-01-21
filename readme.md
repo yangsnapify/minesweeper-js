@@ -10,7 +10,7 @@ Have fun and enjoy the challenge!
 
 ## Features
 
-- Two difficulty modes: Easy (10% mines) and Hard (20% mines)
+- Two difficulty modes: Easy (20% mines) and Hard (40% mines)
 - Customizable grid size
 - Right-click to flag potential mines
 - Flood fill algorithm for revealing empty cells
