@@ -2,8 +2,8 @@
     const isNode = typeof window === 'undefined';
 
     const GAME_MODES = {
-        EASY: { name: 'EASY', minePercentage: 0.10 },
-        HARD: { name: 'HARD', minePercentage: 0.20 }
+        EASY: { name: 'EASY', minePercentage: 0.20 },
+        HARD: { name: 'HARD', minePercentage: 0.40 }
     };
 
     const CELL_STATES = {
@@ -27,7 +27,8 @@
                 minesCount: 0,
                 markMinesArr: new Set(),
                 minesCoords: new Set(),
-                gameMode: GAME_MODES.EASY
+                gameMode: GAME_MODES.EASY,
+                resetGame: false
             };
 
             this.update = this.update.bind(this);
@@ -57,7 +58,10 @@
             });
         }
 
-        createGrid() {
+        createGrid(v) {
+            if (v) {
+                this.config.size = v;
+            }
             return Array.from({ length: this.config.size }, (_, i) =>
                 Array.from({ length: this.config.size }, (_, j) => ({
                     x: i,
@@ -137,14 +141,22 @@
             }, 1000);
         }
 
-        run() {
-            this.state.grid = this.createGrid();
+        run(v) {
+            this.resetGame = false;
+            this.state.grid = this.createGrid(v);
+            this.setStyle();
             this.state.markMinesArr.clear();
             this.state.minesCoords.clear();
             this.placeMines();
             this.calculateAdjacentMines();
             this.update();
             this.updateMineCounter();
+        }
+
+        setStyle() {
+            if (this.config.mapEl) {
+                this.config.mapEl.style["grid-template-columns"] = `repeat(${this.config.size}, 1fr)`
+            }
         }
 
         updateMineCounter() {
@@ -199,6 +211,7 @@
         }
 
         checkWinCondition() {
+            if (this.resetGame) return;
             if (this.state.minesCount === 0) {
                 const allMinesFlagged = Array.from(this.state.minesCoords)
                     .every(coord => this.state.markMinesArr.has(coord));
@@ -211,9 +224,10 @@
                     );
 
                 if (allMinesFlagged && allNonMinesRevealed) {
+                    this.resetGame = true;
                     setTimeout(() => {
                         alert('Congratulations! You won!');
-                        this.run();
+                        this.run(this.config.size + 1);
                     }, 1500);
                 }
             }

@@ -18,11 +18,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   var GAME_MODES = {
     EASY: {
       name: 'EASY',
-      minePercentage: 0.10
+      minePercentage: 0.20
     },
     HARD: {
       name: 'HARD',
-      minePercentage: 0.20
+      minePercentage: 0.40
     }
   };
   var CELL_STATES = {
@@ -45,7 +45,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         minesCount: 0,
         markMinesArr: new Set(),
         minesCoords: new Set(),
-        gameMode: GAME_MODES.EASY
+        gameMode: GAME_MODES.EASY,
+        resetGame: false
       };
       this.update = this.update.bind(this);
       this.toui = this.toui.bind(this);
@@ -77,8 +78,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
     }, {
       key: "createGrid",
-      value: function createGrid() {
+      value: function createGrid(v) {
         var _this2 = this;
+        if (v) {
+          this.config.size = v;
+        }
         return Array.from({
           length: this.config.size
         }, function (_, i) {
@@ -178,14 +182,23 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
     }, {
       key: "run",
-      value: function run() {
-        this.state.grid = this.createGrid();
+      value: function run(v) {
+        this.resetGame = false;
+        this.state.grid = this.createGrid(v);
+        this.setStyle();
         this.state.markMinesArr.clear();
         this.state.minesCoords.clear();
         this.placeMines();
         this.calculateAdjacentMines();
         this.update();
         this.updateMineCounter();
+      }
+    }, {
+      key: "setStyle",
+      value: function setStyle() {
+        if (this.config.mapEl) {
+          this.config.mapEl.style["grid-template-columns"] = "repeat(".concat(this.config.size, ", 1fr)");
+        }
       }
     }, {
       key: "updateMineCounter",
@@ -233,6 +246,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       key: "checkWinCondition",
       value: function checkWinCondition() {
         var _this5 = this;
+        if (this.resetGame) return;
         if (this.state.minesCount === 0) {
           var allMinesFlagged = Array.from(this.state.minesCoords).every(function (coord) {
             return _this5.state.markMinesArr.has(coord);
@@ -241,9 +255,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             return cell.value === 'MINES' || cell.state === CELL_STATES.REVEALED;
           });
           if (allMinesFlagged && allNonMinesRevealed) {
+            this.resetGame = true;
             setTimeout(function () {
               alert('Congratulations! You won!');
-              _this5.run();
+              _this5.run(_this5.config.size + 1);
             }, 1500);
           }
         }
