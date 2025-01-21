@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="./app.js"></script>
     <title>Document</title>
 </head>
 
@@ -48,6 +47,9 @@
     }
 </style>
 <script>
+    document.write('<script src="./dist.js?' + new Date().getTime() + '"><\/script>');
+</script>
+<script>
 
     const map = new MineSweeper({
         size: 5,
@@ -69,7 +71,6 @@
         }
     });
     map.run();
-
 </script>
 
 </html>
